@@ -199,6 +199,29 @@ body {
     background: #fff;
     cursor: pointer;
 }
+.controlPanel{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+#delete{
+    border: none;
+    width: 100px;
+    /*height: 3.px;*/
+    padding: 5px;
+    background-color: #bebbbb;
+    font-family: "Roboto Mono", monospace;
+    font-size: 14px;
+    border-radius: 5px;
+    /*color: ;*/
+
+    &:hover {
+        cursor: pointer;
+        background-color: var(--red);
+        color: #ffffff;
+    }
+}
 
 
 
