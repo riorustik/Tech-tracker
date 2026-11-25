@@ -11,7 +11,7 @@ modal.addEventListener('change', toggleTech);
 form.addEventListener('submit', createTech)
 modal.addEventListener('click', deleteTech);
 
-const technologies = getState();
+let technologies = getState();
 
 function init() {
     renderCards();
@@ -33,7 +33,6 @@ function renderProggess() {
 }
 
 function computeProgressPercent() {
-
     if (technologies.length === 0) return 0
 
     let doneCount = 0;
@@ -45,12 +44,10 @@ function computeProgressPercent() {
 }
 
 function renderCards() {
-    let m = getState()
-    console.log(m)
     if (technologies.length === 0) {
         content.innerHTML = `<p class="empty">Empty technologies </p>`
     } else {
-        content.innerHTML = m.map(toCard).join('');
+        content.innerHTML = technologies.map(toCard).join('');
     }
 }
 
@@ -75,10 +72,12 @@ function toModal(item) {
         ${item.description}
     </p>
     <hr>
-    <div>
-        <input type="checkbox" id="done" ${checked} data-type="${item.type}">
-        <label for="done">learned it</label>
-        <button type="button" id="testRus" data-del="${item.type}">удалить</button>
+    <div class="controlPanel">
+        <div>
+            <input type="checkbox" id="done" ${checked} data-type="${item.type}">
+            <label for="done">learned it</label>
+        </div>
+        <button type="button" id="delete" data-del="${item.type}">удалить</button>
     </div>
     `
 }
@@ -91,10 +90,8 @@ function openModal(title = APP_TITLE, htmlText) {
 
 function toggleTech(event) {
     const type = event.target.dataset.type;
-    const tech = technologies.find(e => e.type === type);
-    tech.done = event.target.checked
-    console.log(tech)
-    saveState(technologies)
+    technologies.map(e => e.type === type ? e.done = event.target.checked : e);
+    saveState()
     init();
 }
 
@@ -117,7 +114,7 @@ function createTech(event) {
 
         setTimeout(() => {
             title.classList.remove('invalid');
-            title.classList.remove('invalid');
+            description.classList.remove('invalid');
         }, 2000)
 
         return
@@ -133,12 +130,12 @@ function createTech(event) {
     description.value = ''
 
     technologies.push(newTech)
-    saveState(technologies)
+    saveState()
     init();
 }
 
-function saveState(m) {
-    localStorage.setItem(LS_KYE, JSON.stringify(m));
+function saveState() {
+    localStorage.setItem(LS_KYE, JSON.stringify(technologies));
 }
 
 function getState() {
@@ -147,12 +144,11 @@ function getState() {
 }
 
 function deleteTech(event) {
-    const deleteBtn = event.target.closest('#testRus');
+    const deleteBtn = event.target.closest('#delete');
     if (deleteBtn) {
-        console.log('Нажали на кнопку удаления!', deleteBtn);
         let deleteTech = event.target.dataset.del;
-        let newTechnologies = technologies.filter(e => e.type !== deleteTech)
-        saveState(newTechnologies)
+        technologies = technologies.filter(e => e.type !== deleteTech)
+        saveState()
         closeCard()
         init();
     }
