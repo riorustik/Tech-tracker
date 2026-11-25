@@ -9,6 +9,7 @@ content.addEventListener('click', openCard);
 backdrop.addEventListener('click', closeCard)
 modal.addEventListener('change', toggleTech);
 form.addEventListener('submit', createTech)
+modal.addEventListener('click', deleteTech);
 
 const technologies = getState();
 
@@ -44,10 +45,12 @@ function computeProgressPercent() {
 }
 
 function renderCards() {
+    let m = getState()
+    console.log(m)
     if (technologies.length === 0) {
         content.innerHTML = `<p class="empty">Empty technologies </p>`
     } else {
-        content.innerHTML = technologies.map(toCard).join('');
+        content.innerHTML = m.map(toCard).join('');
     }
 }
 
@@ -62,7 +65,6 @@ function openCard(event) {
     const tech = technologies.find(e => e.type === data.type);
     if (!tech) return;
     openModal(tech.title, toModal(tech));
-
 }
 
 function toModal(item) {
@@ -76,6 +78,7 @@ function toModal(item) {
     <div>
         <input type="checkbox" id="done" ${checked} data-type="${item.type}">
         <label for="done">learned it</label>
+        <button type="button" id="testRus" data-del="${item.type}">удалить</button>
     </div>
     `
 }
@@ -90,7 +93,8 @@ function toggleTech(event) {
     const type = event.target.dataset.type;
     const tech = technologies.find(e => e.type === type);
     tech.done = event.target.checked
-    saveState()
+    console.log(tech)
+    saveState(technologies)
     init();
 }
 
@@ -128,17 +132,29 @@ function createTech(event) {
     title.value = '';
     description.value = ''
 
-    technologies.push(newTech);
-    saveState()
+    technologies.push(newTech)
+    saveState(technologies)
     init();
 }
 
-function saveState(){
-    localStorage.setItem(LS_KYE, JSON.stringify(technologies));
+function saveState(m){
+    localStorage.setItem(LS_KYE, JSON.stringify(m));
 }
 function getState(){
     const raw = localStorage.getItem(LS_KYE);
     return raw ? JSON.parse(raw) : []
+}
+
+function deleteTech(event) {
+    const deleteBtn = event.target.closest('#testRus');
+    if (deleteBtn) {
+        console.log('Нажали на кнопку удаления!', deleteBtn);
+        let deleteTech = event.target.dataset.del;
+        let newTechnologies = technologies.filter(e => e.type !== deleteTech)
+        saveState(newTechnologies)
+        closeCard()
+        init();
+    }
 }
 
 init()
