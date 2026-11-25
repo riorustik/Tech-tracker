@@ -121,7 +121,7 @@ function createTech(event) {
         }, 2000)
 
         return
-    };
+    }
 
     const newTech = {
         title: title.value,
@@ -137,10 +137,11 @@ function createTech(event) {
     init();
 }
 
-function saveState(m){
+function saveState(m) {
     localStorage.setItem(LS_KYE, JSON.stringify(m));
 }
-function getState(){
+
+function getState() {
     const raw = localStorage.getItem(LS_KYE);
     return raw ? JSON.parse(raw) : []
 }
